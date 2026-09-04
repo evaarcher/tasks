@@ -1,4 +1,3 @@
-import { queries } from "@testing-library/dom";
 import { Question, QuestionType } from "./interfaces/question";
 
 /**
