@@ -63,9 +63,8 @@ export function sumPoints(questions: Question[]): number {
  */
 export function sumPublishedPoints(questions: Question[]): number {
     let sum: number = 0;
-    return questions
-        .map((q: Question) => (q.published ? (sum += q.points) : sum))
-        .reduce((acc, q) => (acc += q));
+    questions.map((q: Question) => (q.published ? (sum += q.points) : sum));
+    return sum;
 }
 
 /***
@@ -86,7 +85,13 @@ id,name,options,points,published
  * Check the unit tests for more examples!
  */
 export function toCSV(questions: Question[]): string {
-    return "";
+    const CSV = questions
+        .map(
+            (q: Question): string =>
+                `${q.id},${q.name},${q.options.length},${q.points},${q.published}`,
+        )
+        .join("\n");
+    return "id,name,options,points,published\n" + CSV;
 }
 
 /**
@@ -95,7 +100,14 @@ export function toCSV(questions: Question[]): string {
  * making the `text` an empty string, and using false for both `submitted` and `correct`.
  */
 export function makeAnswers(questions: Question[]): Answer[] {
-    return [];
+    return questions.map(
+        (q: Question): Answer => ({
+            questionId: q.id,
+            text: "",
+            submitted: false,
+            correct: false,
+        }),
+    );
 }
 
 /***
@@ -103,7 +115,9 @@ export function makeAnswers(questions: Question[]): Answer[] {
  * each question is now published, regardless of its previous published status.
  */
 export function publishAll(questions: Question[]): Question[] {
-    return [];
+    return questions.map(
+        (q: Question): Question => ({ ...q, published: true }),
+    );
 }
 
 /***
@@ -111,7 +125,7 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
-    return false;
+    return questions.every((q: Question) => q.type === questions[0].type);
 }
 
 /***
