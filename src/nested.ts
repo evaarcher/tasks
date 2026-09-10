@@ -1,5 +1,8 @@
+import { Queries } from "@testing-library/dom";
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
+import { makeBlankQuestion } from "./objects";
+import Q from "q";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -139,7 +142,10 @@ export function addNewQuestion(
     name: string,
     type: QuestionType,
 ): Question[] {
-    return [];
+    let copyQs = [...questions];
+    let emptyQ: Question = makeBlankQuestion(id, name, type);
+    copyQs.push(emptyQ);
+    return copyQs;
 }
 
 /***
@@ -152,7 +158,9 @@ export function renameQuestionById(
     targetId: number,
     newName: string,
 ): Question[] {
-    return [];
+    return questions.map(
+        (q): Question => ({ ...q, name: q.id === targetId ? newName : q.name }),
+    );
 }
 
 /***
@@ -167,7 +175,19 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
-    return [];
+    return questions.map((q: Question): Question => {
+        if (q.id === targetId) {
+            return {
+                ...q,
+                type: newQuestionType,
+                options:
+                    newQuestionType !== "multiple_choice_question" ?
+                        []
+                    :   q.options,
+            };
+        }
+        return q;
+    });
 }
 
 /**
