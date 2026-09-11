@@ -1,8 +1,6 @@
-import { Queries } from "@testing-library/dom";
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
-import { makeBlankQuestion } from "./objects";
-import Q from "q";
+import { duplicateQuestion, makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -206,9 +204,24 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    return [];
+    return questions.map((q: Question): Question => {
+        if (q.id !== targetId) {
+            return q;
+        }
+        if (targetOptionIndex === -1) {
+            return {
+                ...q,
+                options: [...q.options, newOption],
+            };
+        }
+        const updated = [...q.options];
+        updated[targetOptionIndex] = newOption;
+        return {
+            ...q,
+            options: updated,
+        };
+    });
 }
-
 /***
  * Consumes an array of questions, and produces a new array based on the original array.
  * The only difference is that the question with id `targetId` should now be duplicated, with
@@ -220,5 +233,10 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number,
 ): Question[] {
-    return [];
+    return questions.flatMap((question) => {
+        if (question.id === targetId) {
+            return [question, duplicateQuestion(newId, question)];
+        }
+        return [question];
+    });
 }
