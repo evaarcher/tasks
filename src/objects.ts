@@ -87,7 +87,6 @@ export function toMarkdown(question: Question): string {
                 question.options.join("\n- ")
         :   "# " + question.name + "\n" + question.body;
 }
-
 /**
  * Return a new version of the given question, except the name should now be
  * `newName`.
